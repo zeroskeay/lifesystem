@@ -35,8 +35,22 @@ jobs:
       - name: Install npm dependencies
         run: npm install --no-package-lock
 
+      - name: Prepare app build metadata
+        shell: bash
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          REPO="${GITHUB_REPOSITORY}"
+          sed -i "s#__APP_VERSION__#${VERSION}#g" www/app.js
+          sed -i "s#__GITHUB_REPO__#${REPO}#g" www/app.js
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
+
       - name: Create Android project
         run: npx cap add android
+
+      - name: Install Android app icons
+        shell: bash
+        run: |
+          cp -R resources/android/. android/app/src/main/res/
 
       - name: Sync web app into Android project
         run: npx cap sync android
@@ -46,31 +60,24 @@ jobs:
         run: ./gradlew --no-daemon --stacktrace assembleDebug
 
       - name: Copy APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk "LifeSystem-${{ github.run_number }}.apk"
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk "LifeSystem-${VERSION}.apk"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: LifeSystem-APK
-          path: "LifeSystem-${{ github.run_number }}.apk"
-
-      - name: Read app version
-        id: version
-        shell: bash
-        run: |
-          VERSION=$(node -p "require('./package.json').version")
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          path: "LifeSystem-${VERSION}.apk"
 
       - name: Create or update GitHub Release
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: "v${{ steps.version.outputs.version }}"
-          name: "Life System v${{ steps.version.outputs.version }}"
+          tag_name: "v${VERSION}"
+          name: "Life System v${VERSION}"
           body: |
             自动构建的 Android APK。
 
             Commit: ${{ github.sha }}
             Run: #${{ github.run_number }}
-          files: "LifeSystem-${{ github.run_number }}.apk"
+          files: "LifeSystem-${VERSION}.apk"
           overwrite_files: true
           fail_on_unmatched_files: true
