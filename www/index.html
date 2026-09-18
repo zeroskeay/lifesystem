@@ -3,29 +3,147 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#f7f7f5">
+  <meta name="theme-color" content="#f5f8fc">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <title>生活系统</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main class="app">
-<header class="topbar"><div><div class="eyebrow">LIFE SYSTEM</div><h1>今天</h1></div><button id="todayBtn" class="icon-btn">⌂</button></header>
-<section class="date-row"><button id="prevDay" class="day-btn">‹</button><div id="dateLabel"></div><button id="nextDay" class="day-btn">›</button></section>
-<section class="card">
-<div class="section-title"><span>今天的基本状态</span><span id="completion">0 / 5</span></div>
-<div class="checks">
-<button class="check-item" data-key="sleep"><span class="dot"></span><span><b>睡眠</b><small>昨晚休息得怎么样</small></span></button>
-<button class="check-item" data-key="body"><span class="dot"></span><span><b>身体</b><small>今天有活动身体</small></span></button>
-<button class="check-item" data-key="task"><span class="dot"></span><span><b>主要任务</b><small>完成了一件重要的事</small></span></button>
-<button class="check-item" data-key="life"><span class="dot"></span><span><b>主动生活</b><small>主动做了一件想做的事</small></span></button>
-<button class="check-item" data-key="entertainment"><span class="dot"></span><span><b>娱乐</b><small>娱乐是主动选择，而非失控消耗</small></span></button>
-</div></section>
-<section class="card experience-card"><div class="section-title"><span>今日体验</span><strong id="scoreValue">7</strong></div><input id="score" type="range" min="0" max="10" value="7"><div class="scale"><span>0 很差</span><span>10 很好</span></div></section>
-<section class="card"><div class="section-title"><span>今天做了什么？</span></div><textarea id="note" maxlength="300" placeholder="记下一两句话就够了……"></textarea></section>
-<button id="saveBtn" class="save-btn">保存今天</button>
-<section class="summary"><div class="summary-title">最近 7 天</div><div id="weekSummary" class="week-summary"></div><div class="stats"><div><strong id="avgScore">—</strong><small>平均体验</small></div><div><strong id="activeDays">0</strong><small>主动生活</small></div><div><strong id="stableDays">0</strong><small>基本稳定</small></div></div></section>
-<footer><span>稳 · 活 · 进 · 选</span><span>数据只保存在本机</span></footer>
+  <header class="topbar">
+    <div class="brand">
+      <img class="brand-icon" src="icon.png" alt="">
+      <div>
+        <div class="eyebrow">LIFE SYSTEM</div>
+        <h1>生活系统</h1>
+        <p>记录当下 · 看见规律 · 掌控生活</p>
+      </div>
+    </div>
+    <button id="todayBtn" class="ghost-btn" aria-label="回到今天">今天</button>
+  </header>
+
+  <section class="date-card">
+    <button id="prevDay" class="day-btn" aria-label="前一天">‹</button>
+    <div>
+      <div id="dateLabel" class="date-main"></div>
+      <div id="dateHint" class="date-hint"></div>
+    </div>
+    <button id="nextDay" class="day-btn" aria-label="后一天">›</button>
+  </section>
+
+  <section class="card">
+    <div class="section-head">
+      <div>
+        <span class="kicker">TODAY</span>
+        <h2>今天的基本状态</h2>
+      </div>
+      <span id="completion" class="completion">0 / 5</span>
+    </div>
+
+    <div class="checks">
+      <button class="check-item" data-key="sleep">
+        <span class="check-icon">☾</span>
+        <span><b>睡眠</b><small>昨晚休息得怎么样</small></span>
+        <span class="check-mark">✓</span>
+      </button>
+      <button class="check-item" data-key="body">
+        <span class="check-icon">↗</span>
+        <span><b>身体</b><small>今天有活动身体</small></span>
+        <span class="check-mark">✓</span>
+      </button>
+      <button class="check-item" data-key="task">
+        <span class="check-icon">□</span>
+        <span><b>主要任务</b><small>完成了一件重要的事</small></span>
+        <span class="check-mark">✓</span>
+      </button>
+      <button class="check-item" data-key="life">
+        <span class="check-icon">✦</span>
+        <span><b>主动生活</b><small>主动做了一件想做的事</small></span>
+        <span class="check-mark">✓</span>
+      </button>
+      <button class="check-item" data-key="entertainment">
+        <span class="check-icon">⌁</span>
+        <span><b>娱乐</b><small>娱乐是主动选择，而非失控消耗</small></span>
+        <span class="check-mark">✓</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="card score-card">
+    <div class="section-head">
+      <div>
+        <span class="kicker">EXPERIENCE</span>
+        <h2>今天的体验</h2>
+      </div>
+      <div class="score-big"><strong id="scoreValue">7</strong><span>/10</span></div>
+    </div>
+    <input id="score" type="range" min="0" max="10" value="7">
+    <div class="scale"><span>0 很差</span><span>5 一般</span><span>10 很好</span></div>
+  </section>
+
+  <section class="card">
+    <div class="section-head">
+      <div>
+        <span class="kicker">NOTE</span>
+        <h2>一句话记录</h2>
+      </div>
+      <span class="muted">可不写</span>
+    </div>
+    <textarea id="note" maxlength="300" placeholder="今天发生了什么？感觉怎么样？一句话就够。"></textarea>
+  </section>
+
+  <button id="saveBtn" class="save-btn">保存今天 <span>→</span></button>
+
+  <section class="card trend-card">
+    <div class="section-head">
+      <div>
+        <span class="kicker">TREND</span>
+        <h2>最近 7 天</h2>
+      </div>
+      <span class="muted">体验分</span>
+    </div>
+    <div id="weekSummary" class="week-summary"></div>
+    <div class="stats">
+      <div><strong id="avgScore">—</strong><small>平均体验</small></div>
+      <div><strong id="activeDays">0</strong><small>主动生活</small></div>
+      <div><strong id="stableDays">0</strong><small>基本稳定</small></div>
+    </div>
+  </section>
+
+  <section class="card update-card">
+    <div class="update-row">
+      <div class="update-logo">↻</div>
+      <div class="update-copy">
+        <span class="kicker">SYSTEM</span>
+        <h2>版本更新</h2>
+        <p id="versionText">当前版本 v0.3.0</p>
+      </div>
+      <button id="updateBtn" class="outline-btn">检查更新</button>
+    </div>
+    <div id="updateStatus" class="update-status">启动时会自动检查 GitHub 最新版本</div>
+  </section>
+
+  <footer>
+    <span>稳 · 活 · 进 · 选</span>
+    <span>数据只保存在本机</span>
+  </footer>
 </main>
+
+<div id="updateModal" class="modal hidden" aria-hidden="true">
+  <div class="modal-backdrop"></div>
+  <div class="modal-panel">
+    <button id="closeModal" class="modal-close" aria-label="关闭">×</button>
+    <div class="rocket">↑</div>
+    <span class="kicker">NEW VERSION</span>
+    <h2 id="modalTitle">发现新版本</h2>
+    <p id="modalBody">有新的生活系统版本可以更新。</p>
+    <div class="modal-actions">
+      <button id="installUpdate" class="save-btn">查看并下载更新</button>
+      <button id="laterUpdate" class="secondary-btn">稍后</button>
+    </div>
+  </div>
+</div>
+
 <script src="app.js"></script>
 </body>
 </html>

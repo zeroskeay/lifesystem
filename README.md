@@ -1,44 +1,50 @@
-# Life System / 生活系统
+# 生活系统 Life System
 
-极简个人生活状态记录工具。
+极简个人生活系统：稳 · 活 · 进 · 选。
 
-## 这版解决了什么
+## 功能
 
-GitHub Actions 会自动：
+- 单页面记录：睡眠、身体、主要任务、主动生活、娱乐
+- 0–10 今日体验评分
+- 一句话记录
+- 最近 7 天趋势与基础统计
+- 本地 localStorage 数据，不需要账号
+- 自动检查 GitHub Release 最新版本
+- 发现新版本后进入 Release 下载 APK
+- Android 应用图标与自适应图标
+- 每次推送到 `main` 自动构建 APK 并发布到 GitHub Releases
 
-1. 安装 Node.js
-2. 安装 Capacitor
-3. 创建 Android 工程
-4. 同步 Web 页面
-5. 构建 Android Debug APK
-6. 将 APK 保存到 Actions Artifacts
-7. 发布 GitHub Release 时自动把 APK 附加到 Release
+## 使用
 
-## 上传方式
+把整个项目上传到 GitHub 仓库，推送到 `main`。
 
-把本目录的全部内容上传到 GitHub 仓库，然后进入：
+GitHub Actions 会：
 
-**Actions → Build Android APK**
+1. 安装 Node / Java / Android SDK
+2. 创建 Capacitor Android 项目
+3. 写入应用图标
+4. 构建 APK
+5. 自动创建或更新 `v<package.json version>` Release
+6. 将 APK 放进 Release 的 Assets
 
-第一次运行完成后，在运行记录底部：
+## 发布新版本
 
-**Artifacts → LifeSystem-APK**
+修改 `package.json`：
 
-下载 APK。
+```json
+"version": "0.3.1"
+```
 
-## 正式 Release
+然后 push 到 `main`，GitHub 会自动生成：
 
-创建一个 GitHub Release，例如 `v0.1.1` 并发布。
+`Life System v0.3.1`
 
-Actions 会自动把 APK 附加到该 Release。
+并附上：
 
-## 技术
+`LifeSystem-0.3.1.apk`
 
-- HTML
-- CSS
-- JavaScript
-- Capacitor
-- Android
-- GitHub Actions
+应用内的版本检查会自动读取当前 GitHub 仓库的最新 Release。
 
-当前 APK 是 Debug 版本，适合个人安装测试。
+## 注意
+
+当前“升级”采用安全的基础方案：应用发现新版本后，打开 GitHub Release 页面让用户下载 APK。不会在后台静默安装 APK，也不会要求账号或服务器。
