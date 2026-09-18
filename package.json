@@ -1,12 +1,12 @@
 {
   "name": "life-system",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "极简个人生活系统 Android/Web App",
   "scripts": {
-    "build": "echo "Static web app - no build step required"",
+    "cap:add": "npx cap add android",
     "cap:sync": "npx cap sync android",
-    "android:build": "cd android && gradlew.bat assembleDebug"
+    "android:build": "cd android && ./gradlew assembleDebug"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.3",
