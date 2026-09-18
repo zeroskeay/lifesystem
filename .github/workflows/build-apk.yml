@@ -50,7 +50,11 @@ jobs:
       - name: Install Android app icons
         shell: bash
         run: |
-          cp -R resources/android/. android/app/src/main/res/
+          # Capacitor creates ic_launcher_background.xml itself.
+          # Copy only our icon assets so we do not define the same color resource twice.
+          cp -R resources/android/mipmap-* android/app/src/main/res/
+          cp -R resources/android/drawable android/app/src/main/res/
+          sed -i 's#<color name="ic_launcher_background">.*</color>#<color name="ic_launcher_background">#071B3A</color>#' android/app/src/main/res/values/ic_launcher_background.xml
 
       - name: Sync web app into Android project
         run: npx cap sync android
