@@ -4,8 +4,6 @@ on:
   push:
     branches: [ "main" ]
   workflow_dispatch:
-  release:
-    types: [published]
 
 permissions:
   contents: write
@@ -16,10 +14,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: '22'
 
@@ -56,8 +54,23 @@ jobs:
           name: LifeSystem-APK
           path: "LifeSystem-${{ github.run_number }}.apk"
 
-      - name: Attach APK to GitHub Release
-        if: github.event_name == 'release'
-        uses: softprops/action-gh-release@v2
+      - name: Read app version
+        id: version
+        shell: bash
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Create or update GitHub Release
+        uses: softprops/action-gh-release@v3
         with:
+          tag_name: "v${{ steps.version.outputs.version }}"
+          name: "Life System v${{ steps.version.outputs.version }}"
+          body: |
+            自动构建的 Android APK。
+
+            Commit: ${{ github.sha }}
+            Run: #${{ github.run_number }}
           files: "LifeSystem-${{ github.run_number }}.apk"
+          overwrite_files: true
+          fail_on_unmatched_files: true
