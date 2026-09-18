@@ -1,6 +1,6 @@
 {
   "name": "life-system",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "description": "Life System - 极简个人生活系统",
   "scripts": {
@@ -11,5 +11,8 @@
     "@capacitor/android": "8.5.2",
     "@capacitor/cli": "8.5.2",
     "@capacitor/core": "8.5.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
   }
 }
