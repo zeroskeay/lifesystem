@@ -1,16 +1,15 @@
 {
   "name": "life-system",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "private": true,
-  "description": "极简个人生活系统 Android/Web App",
+  "description": "Life System - 极简个人生活系统",
   "scripts": {
     "cap:add": "npx cap add android",
-    "cap:sync": "npx cap sync android",
-    "android:build": "cd android && ./gradlew assembleDebug"
+    "cap:sync": "npx cap sync android"
   },
   "dependencies": {
-    "@capacitor/android": "^7.4.3",
-    "@capacitor/cli": "^7.4.3",
-    "@capacitor/core": "^7.4.3"
+    "@capacitor/android": "8.5.2",
+    "@capacitor/cli": "8.5.2",
+    "@capacitor/core": "8.5.2"
   }
 }
