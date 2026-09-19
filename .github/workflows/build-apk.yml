@@ -72,13 +72,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: LifeSystem-APK
-          path: "LifeSystem-${VERSION}.apk"
+          path: "LifeSystem-${{ env.VERSION }}.apk"
 
       - name: Create or update GitHub Release
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: "v${VERSION}"
-          name: "Life System v${VERSION}"
+          tag_name: "v${{ env.VERSION }}"
+          name: "Life System v${{ env.VERSION }}"
           body: |
             自动构建的 Android APK。
 
