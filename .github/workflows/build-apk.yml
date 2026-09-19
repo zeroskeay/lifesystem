@@ -105,10 +105,11 @@ jobs:
               text,
               count=1,
           )
-          text = text.replace(
-              "        release {\n",
-              "        release {\n            signingConfig signingConfigs.release\n",
-              1,
+          text = re.sub(
+              r"(?m)^(\s*buildTypes\s*\{\s*\n\s*release\s*\{\s*)$",
+              r"\1\n            signingConfig signingConfigs.release",
+              text,
+              count=1,
           )
           build_file.write_text(text)
           PY
