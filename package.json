@@ -1,6 +1,6 @@
 {
   "name": "life-system",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "type": "module",
   "description": "生活系统 - 记录当下 · 看见规律 · 掌控生活",
@@ -11,7 +11,8 @@
   "dependencies": {
     "@capacitor/android": "8.5.2",
     "@capacitor/cli": "8.5.2",
-    "@capacitor/core": "8.5.2"
+    "@capacitor/core": "8.5.2",
+    "@capacitor/filesystem": "8.0.0"
   },
   "devDependencies": {
     "typescript": "^5.9.2"

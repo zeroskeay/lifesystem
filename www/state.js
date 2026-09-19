@@ -108,3 +108,7 @@ export function avg(list, fn) {
   const values = list.map(fn).filter((v) => Number.isFinite(v));
   return values.length ? values.reduce((x, y) => x + y, 0) / values.length : 0;
 }
+
+export function recordScore(record) {
+  return avg(checkKeys, (x) => Number(record?.scores?.[x] ?? defaults[x]));
+}

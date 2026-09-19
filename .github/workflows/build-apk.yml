@@ -51,6 +51,15 @@ jobs:
       - name: Sync web app into Android project
         run: npx cap sync android
 
+      - name: Add native file export runtime
+        shell: bash
+        run: |
+          mkdir -p www/vendor
+          cp node_modules/@capacitor/core/dist/capacitor.js www/vendor/capacitor.js
+          cp node_modules/@capacitor/synapse/dist/synapse.js www/vendor/synapse.js
+          cp node_modules/@capacitor/filesystem/dist/plugin.js www/vendor/filesystem.js
+          npx cap sync android
+
       - name: Install Android app icons
         shell: bash
         run: |
