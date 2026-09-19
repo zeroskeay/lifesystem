@@ -1,5 +1,5 @@
 export const APP_VERSION = "__APP_VERSION__";
-export const GITHUB_REPO = "__GITHUB_REPO__";
+export const GITHUB_REPO = "zeroskeay/lifesystem";
 export const KEY = "life-system-v01";
 export const STORAGE_VERSION = 1;
 

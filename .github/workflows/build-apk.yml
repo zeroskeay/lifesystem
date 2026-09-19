@@ -39,10 +39,8 @@ jobs:
         shell: bash
         run: |
           VERSION=$(node -p "require('./package.json').version")
-          REPO="${GITHUB_REPOSITORY}"
           sed -i "s#__APP_VERSION__#${VERSION}#g" www/app.js
           sed -i "s#__APP_VERSION__#${VERSION}#g" www/index.html
-          sed -i "s#__GITHUB_REPO__#${REPO}#g" www/app.js
           echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
 
       - name: Create Android project
