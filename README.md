@@ -14,6 +14,17 @@ v1.01：完善记录编辑、日期限制、趋势图和移动端交互。
 - 无自动更新/升级提示机制
 - GitHub Actions 自动构建 APK 并发布到 Releases
 
+### Android 升级签名
+
+工作流使用固定的 Release keystore 构建 APK，因此同一安装来源的后续版本可以直接覆盖安装并保留本地数据。仓库需要配置以下 GitHub Actions Secrets：
+
+- `ANDROID_KEYSTORE_BASE64`：Release keystore 文件的 Base64 内容
+- `ANDROID_KEYSTORE_PASSWORD`：keystore 密码
+- `ANDROID_KEY_ALIAS`：签名 key 的别名
+- `ANDROID_KEY_PASSWORD`：签名 key 的密码
+
+请妥善备份 keystore 及密码；丢失后无法继续发布可覆盖旧版本的 APK。
+
 ## 技术
 HTML / CSS / JavaScript + Capacitor + Android
 
