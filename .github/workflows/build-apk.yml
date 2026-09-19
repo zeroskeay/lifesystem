@@ -51,9 +51,12 @@ jobs:
         shell: bash
         run: |
           # Capacitor creates ic_launcher_background.xml itself.
-          # Copy only our icon assets so we do not define the same color resource twice.
+          # Copy only our icon assets and custom colors so we do not define the
+          # generated ic_launcher_background resource twice.
           cp -R resources/android/mipmap-* android/app/src/main/res/
           cp -R resources/android/drawable android/app/src/main/res/
+          cp resources/android/values/life_system_icon_colors.xml android/app/src/main/res/values/
+          test -f android/app/src/main/res/values/life_system_icon_colors.xml
 
       - name: Sync web app into Android project
         run: npx cap sync android
