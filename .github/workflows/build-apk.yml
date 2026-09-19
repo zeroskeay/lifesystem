@@ -55,6 +55,7 @@ jobs:
         run: |
           # Install custom icons after Capacitor sync so generated defaults
           # cannot overwrite the app icon resources.
+          find android/app/src/main/res -type f -name 'ic_launcher_foreground.*' -delete
           cp -R resources/android/mipmap-* android/app/src/main/res/
           cp -R resources/android/drawable android/app/src/main/res/
           cp resources/android/values/life_system_icon_colors.xml android/app/src/main/res/values/
