@@ -2,6 +2,7 @@
   "name": "life-system",
   "version": "1.0.2",
   "private": true,
+  "type": "module",
   "description": "生活系统 - 记录当下 · 看见规律 · 掌控生活",
   "scripts": {
     "cap:add": "npx cap add android",
