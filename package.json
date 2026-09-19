@@ -1,8 +1,8 @@
 {
   "name": "life-system",
-  "version": "0.3.1",
+  "version": "1.0.1",
   "private": true,
-  "description": "Life System - 极简个人生活系统",
+  "description": "生活系统 - 记录当下 · 看见规律 · 掌控生活",
   "scripts": {
     "cap:add": "npx cap add android",
     "cap:sync": "npx cap sync android"

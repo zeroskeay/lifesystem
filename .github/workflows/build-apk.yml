@@ -47,17 +47,22 @@ jobs:
       - name: Create Android project
         run: npx cap add android
 
-      - name: Install Android app icons
-        shell: bash
-        run: |
-          # Capacitor creates ic_launcher_background.xml itself.
-          # Copy only our icon assets so we do not define the same color resource twice.
-          cp -R resources/android/mipmap-* android/app/src/main/res/
-          cp -R resources/android/drawable android/app/src/main/res/
-          sed -i 's#<color name="ic_launcher_background">.*</color>#<color name="ic_launcher_background">#071B3A</color>#' android/app/src/main/res/values/ic_launcher_background.xml
-
       - name: Sync web app into Android project
         run: npx cap sync android
+
+      - name: Install Life System launcher icons
+        shell: bash
+        run: |
+          cp -R resources/android/mipmap-* android/app/src/main/res/
+          cp -R resources/android/drawable android/app/src/main/res/
+          cp -R resources/android/values/*.xml android/app/src/main/res/values/
+
+      - name: Verify launcher resources
+        shell: bash
+        run: |
+          test -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          test -f android/app/src/main/res/drawable/ic_launcher_foreground.png
+          test -f android/app/src/main/res/values/life_system_icon_colors.xml
 
       - name: Build debug APK
         working-directory: android
@@ -75,13 +80,13 @@ jobs:
       - name: Create or update GitHub Release
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: "v${VERSION}"
-          name: "Life System v${VERSION}"
+          tag_name: "v${{ env.VERSION }}"
+          name: "Life System v${{ env.VERSION }}"
           body: |
-            自动构建的 Android APK。
-
+            生活系统 Android APK。
+            版本：v${{ env.VERSION }}
             Commit: ${{ github.sha }}
             Run: #${{ github.run_number }}
-          files: "LifeSystem-${VERSION}.apk"
+          files: "LifeSystem-${{ env.VERSION }}.apk"
           overwrite_files: true
           fail_on_unmatched_files: true
