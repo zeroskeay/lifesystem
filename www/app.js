@@ -1,4 +1,5 @@
 const APP_VERSION="__APP_VERSION__";
+const GITHUB_REPO="__GITHUB_REPO__";
 const KEY="life-system-v01";
 const dayNames=["日","一","二","三","四","五","六"];
 const checkKeys=["sleep","body","task","life","entertainment"];
@@ -84,6 +85,7 @@ document.getElementById("recordPrevDay").addEventListener("click",()=>{selectedD
 document.getElementById("recordNextDay").addEventListener("click",()=>{if(isToday(selectedDate))return;selectedDate.setDate(selectedDate.getDate()+1);renderEditor()});
 document.getElementById("recordTodayBtn").addEventListener("click",()=>{selectedDate=new Date(today);renderEditor()});
 document.getElementById("settingsQuick").addEventListener("click",()=>navigate("settings"));
+document.getElementById("githubBtn").addEventListener("click",()=>window.open(`https://github.com/${GITHUB_REPO}/releases/latest`,"_blank"));
 document.getElementById("aboutBtn").addEventListener("click",()=>showToast(`生活系统 v${APP_VERSION}`));
 
 function renderEditor(){
