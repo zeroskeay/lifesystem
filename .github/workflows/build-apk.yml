@@ -62,12 +62,71 @@ jobs:
           test -f android/app/src/main/res/drawable/ic_launcher_foreground.png
           test -f android/app/src/main/res/values/life_system_icon_colors.xml
 
-      - name: Build debug APK
+      - name: Configure Android release signing
+        shell: bash
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          test -n "$ANDROID_KEYSTORE_BASE64"
+          test -n "$ANDROID_KEYSTORE_PASSWORD"
+          test -n "$ANDROID_KEY_ALIAS"
+          test -n "$ANDROID_KEY_PASSWORD"
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/release-keystore.jks
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+
+          build_file = Path("android/app/build.gradle")
+          text = build_file.read_text()
+          signing = """    signingConfigs {
+                  release {
+                      storeFile file("../release-keystore.jks")
+                      storePassword System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                      keyAlias System.getenv("ANDROID_KEY_ALIAS")
+                      keyPassword System.getenv("ANDROID_KEY_PASSWORD")
+                  }
+              }
+          """
+          if "signingConfigs {" not in text:
+              text = text.replace("    buildTypes {", signing + "    buildTypes {", 1)
+          text = re.sub(
+              r"(?m)^(\s*)versionCode\s+.*$",
+              r'\1versionCode project.hasProperty("versionCode") ? project.versionCode.toInteger() : 1',
+              text,
+              count=1,
+          )
+          text = re.sub(
+              r"(?m)^(\s*)versionName\s+.*$",
+              r'\1versionName project.hasProperty("versionName") ? project.versionName : "1.0"',
+              text,
+              count=1,
+          )
+          text = text.replace(
+              "        release {\n",
+              "        release {\n            signingConfig signingConfigs.release\n",
+              1,
+          )
+          build_file.write_text(text)
+          PY
+
+      - name: Build signed release APK
         working-directory: android
-        run: ./gradlew --no-daemon --stacktrace assembleDebug
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          ./gradlew --no-daemon --stacktrace \
+            -PversionCode="${{ github.run_number }}" \
+            -PversionName="${{ env.VERSION }}" \
+            assembleRelease
 
       - name: Copy APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk "LifeSystem-${VERSION}.apk"
+        run: cp android/app/build/outputs/apk/release/app-release.apk "LifeSystem-${VERSION}.apk"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
