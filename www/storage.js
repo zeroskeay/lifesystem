@@ -1,4 +1,4 @@
-import { KEY, defaults, defaultRecord } from "./state.js";
+import { KEY, defaults, defaultRecord, recordScore } from "./state.js";
 
 function normalizeRecord(record) {
   if (!record || typeof record !== "object") {
@@ -15,9 +15,7 @@ function normalizeRecord(record) {
     details: record.details || {},
   };
 
-  if (Number.isFinite(Number(normalized.score))) {
-    normalized.score = Number(normalized.score);
-  }
+  normalized.score = recordScore(normalized);
 
   return normalized;
 }

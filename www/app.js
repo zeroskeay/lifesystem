@@ -16,9 +16,13 @@ import {
   escapeHtml,
   ensureRecord,
   avg,
+  recordScore,
   weekRecords,
 } from "./state.js";
 import { loadData, saveData, exportData, parseImportedData } from "./storage.js";
+
+const nativeCapacitor = globalThis.Capacitor;
+const nativeFilesystemPlugin = globalThis.capacitorFilesystemPluginCapacitor;
 
 const appState = {
   selectedDate: new Date(today),
@@ -78,7 +82,34 @@ function confirmAction(message, onConfirm) {
   document.getElementById("confirmNo").onclick = reject;
 }
 
+async function exportBackup() {
+  const filename = `life-system-backup-${key(today)}.json`;
+  const content = exportData(appState.data);
+
+  if (nativeCapacitor?.isNativePlatform() && nativeFilesystemPlugin) {
+    const encoded = btoa(unescape(encodeURIComponent(content)));
+    await nativeFilesystemPlugin.Filesystem.writeFile({
+      path: filename,
+      data: encoded,
+      directory: nativeFilesystemPlugin.FilesystemDirectory.Documents,
+      recursive: true,
+    });
+    showToast(`已导出到 Documents/${filename}`);
+    return;
+  }
+
+  const blob = new Blob([content], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(`已下载：${filename}`);
+}
+
 function persistRecord(record) {
+  record.score = recordScore(record);
   appState.data[key(appState.selectedDate)] = record;
   clearTimeout(appState.saveTimer);
   appState.saveTimer = setTimeout(() => {
@@ -105,7 +136,7 @@ function renderBars(id, days, endDate) {
   box.innerHTML = "";
 
   weekRecords(days, endDate, appState.data).forEach(({ date, record }) => {
-    const score = record ? Number(record.score ?? 0) : 0;
+    const score = record ? recordScore(record) : 0;
     const col = document.createElement("div");
     col.className = "bar-col";
     col.innerHTML = `<div class="bar-stack"><i class="bar-fill" style="height:${clamp(score * 10, 3, 100)}%"></i></div><span>${date.getMonth() + 1}/${date.getDate()}</span>`;
@@ -118,7 +149,7 @@ function renderSparkline(svgId, days, endDate) {
   if (!svg) return;
 
   const vals = weekRecords(days, endDate, appState.data)
-    .map((x) => (x.record ? Number(x.record.score ?? 0) : null))
+    .map((x) => (x.record ? recordScore(x.record) : null))
     .filter((x) => x !== null);
 
   if (!vals.length) {
@@ -293,7 +324,7 @@ function renderEditor() {
 
 function renderStats() {
   const rows = weekRecords(appState.currentDays, appState.selectedDate, appState.data);
-  const scores = rows.map((x) => (x.record ? Number(x.record.score ?? 0) : null));
+  const scores = rows.map((x) => (x.record ? recordScore(x.record) : null));
   const valid = scores.filter((x) => x !== null);
 
   document.getElementById("statsAvg").textContent = `平均 ${valid.length ? avg(valid, (x) => x).toFixed(1) : "—"}`;
@@ -318,7 +349,7 @@ function drawTrend(rows) {
     html += `<line x1="${pad}" y1="${y}" x2="${w - pad}" y2="${y}" stroke="#e8f0f6" stroke-width="1"/>`;
   }
 
-  const vals = rows.map((x) => (x.record ? Number(x.record.score ?? 0) : null));
+  const vals = rows.map((x) => (x.record ? recordScore(x.record) : null));
   const valid = vals.filter((x) => x !== null);
 
   if (valid.length) {
@@ -419,7 +450,6 @@ function initializeApp() {
     renderEditor();
   });
 
-  document.getElementById("settingsQuick").addEventListener("click", () => navigate("settings"));
   document.getElementById("githubBtn").addEventListener("click", () => window.open(`https://github.com/${GITHUB_REPO}/releases/latest`, "_blank"));
   document.getElementById("aboutBtn").addEventListener("click", () => showToast(`生活系统 v${APP_VERSION}`));
 
@@ -432,14 +462,10 @@ function initializeApp() {
 
   document.getElementById("dataBtn").addEventListener("click", () => {
     confirmAction("确认导出本地数据吗？", () => {
-      const blob = new Blob([exportData(appState.data)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `life-system-backup-${key(today)}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-      showToast("数据已导出");
+      exportBackup().catch((error) => {
+        console.error("Failed to export data.", error);
+        showToast("导出失败，请检查存储空间");
+      });
     });
   });
 
