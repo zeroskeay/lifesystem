@@ -140,11 +140,13 @@
       <div><b>生活系统</b></div>
     </div>
     <section class="section-card settings-list">
-      <button><span class="setting-icon">☾</span><div><b>主题模式</b><small>跟随系统</small></div><span>›</span></button>
-      <button id="dataBtn"><span class="setting-icon">▣</span><div><b>数据管理</b><small>导出 / 备份 / 恢复</small></div><span>›</span></button>
-      <button><span class="setting-icon">♙</span><div><b>隐私设置</b><small>本地存储，保护隐私</small></div><span>›</span></button>
+      <button id="themeBtn"><span class="setting-icon">☾</span><div><b>主题模式</b><small id="themeModeLabel">浅色模式</small></div><span>›</span></button>
+      <button id="dataBtn"><span class="setting-icon">▣</span><div><b>数据管理</b><small>导出 / 备份</small></div><span>›</span></button>
+      <button id="restoreBtn"><span class="setting-icon">↥</span><div><b>恢复备份</b><small>导入 .json 文件</small></div><span>›</span></button>
+      <button id="clearDataBtn"><span class="setting-icon">⌫</span><div><b>清空记录</b><small>删除本地全部数据</small></div><span>›</span></button>
       <button id="githubBtn"><span class="setting-icon">◉</span><div><b>项目主页</b><small>GitHub · 下载最新版本</small></div><span>›</span></button>
       <button id="aboutBtn"><span class="setting-icon">ⓘ</span><div><b>关于应用</b><small>版本 __APP_VERSION__</small></div><span>›</span></button>
+      <input id="restoreInput" type="file" accept="application/json,.json" hidden>
     </section>
     <section class="quote-card">活着，有良好体验感的活着</section>
   </section>
@@ -158,6 +160,16 @@
 </main>
 
 <div id="toast" class="toast hidden"></div>
-<script src="app.js"></script>
+<div id="confirmModal" class="confirm-modal" hidden role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+  <div class="confirm-card">
+    <div id="confirmTitle" class="confirm-title">确认操作</div>
+    <p id="confirmText">确定继续吗？</p>
+    <div class="confirm-actions">
+      <button id="confirmNo" class="confirm-btn secondary">取消</button>
+      <button id="confirmYes" class="confirm-btn primary">确认</button>
+    </div>
+  </div>
+</div>
+<script type="module" src="./app.js"></script>
 </body>
 </html>
