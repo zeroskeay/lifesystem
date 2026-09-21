@@ -72,7 +72,7 @@ export function defaultRecord() {
   return {
     checks: {},
     scores: { ...defaults },
-    score: 0,
+    score: null,
     note: "",
     todos: [],
     todoDone: [],
@@ -110,5 +110,12 @@ export function avg(list, fn) {
 }
 
 export function recordScore(record) {
-  return avg(checkKeys, (x) => Number(record?.scores?.[x] ?? defaults[x]));
+  const completedScores = checkKeys
+    .filter((x) => record?.checks?.[x])
+    .map((x) => Number(record?.scores?.[x]))
+    .filter((score) => Number.isFinite(score));
+
+  return completedScores.length
+    ? completedScores.reduce((sum, score) => sum + score, 0) / completedScores.length
+    : null;
 }

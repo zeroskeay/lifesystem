@@ -39,7 +39,7 @@ jobs:
         shell: bash
         run: |
           VERSION=$(node -p "require('./package.json').version")
-          sed -i "s#__APP_VERSION__#${VERSION}#g" www/app.js
+          sed -i "s#__APP_VERSION__#${VERSION}#g" www/state.js
           sed -i "s#__APP_VERSION__#${VERSION}#g" www/index.html
           echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
 
