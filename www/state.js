@@ -72,7 +72,7 @@ export function defaultRecord() {
   return {
     checks: {},
     scores: { ...defaults },
-    score: 7.5,
+    score: 0,
     note: "",
     todos: [],
     todoDone: [],

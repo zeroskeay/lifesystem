@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.lifesystem.app',
-  appName: '生活系统',
+  appName: '见微',
   webDir: 'www'
 };
 

@@ -1,9 +1,9 @@
 {
   "name": "life-system",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
-  "description": "生活系统 - 记录当下 · 看见规律 · 掌控生活",
+  "description": "见微 · Life System - 记录当下 · 看见规律 · 掌控生活",
   "scripts": {
     "cap:add": "npx cap add android",
     "cap:sync": "npx cap sync android"

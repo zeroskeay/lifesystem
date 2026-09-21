@@ -148,7 +148,7 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           tag_name: "v${{ env.VERSION }}"
-          name: "Life System v${{ env.VERSION }}"
+          name: "见微 · Life System v${{ env.VERSION }}"
           body: |
             自动构建的 Android APK。
 
