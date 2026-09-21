@@ -44,9 +44,10 @@ function applyTheme(themeName) {
   const themeBtn = document.getElementById("themeBtn");
   if (themeBtn) {
     const label = document.getElementById("themeModeLabel");
+    const icon = themeBtn.querySelector(".setting-icon");
     const isDark = theme === "dark";
-    themeBtn.querySelector("span").textContent = isDark ? "☀" : "☾";
-    label.textContent = isDark ? "深色模式" : "浅色模式";
+    if (icon) icon.textContent = isDark ? "☀" : "☾";
+    if (label) label.textContent = isDark ? "深色模式" : "浅色模式";
     document.getElementById("themeToggle")?.classList.toggle("active", isDark);
   }
 }

@@ -33,7 +33,15 @@ body[data-theme="dark"] .settings-list button,
 body[data-theme="dark"] .icon-btn,
 body[data-theme="dark"] .date-arrow,
 body[data-theme="dark"] .feature-list article,
-body[data-theme="dark"] .settings-head {
+body[data-theme="dark"] .settings-head,
+body[data-theme="dark"] .settings-group,
+body[data-theme="dark"] .settings-row,
+body[data-theme="dark"] .about-back,
+body[data-theme="dark"] .about-hero,
+body[data-theme="dark"] .about-card,
+body[data-theme="dark"] .module-card,
+body[data-theme="dark"] .philosophy-card,
+body[data-theme="dark"] .about-callout {
   background:var(--bg-panel);
   color:var(--text);
   border-color:var(--line);
@@ -68,7 +76,19 @@ body[data-theme="dark"] .muted,
 body[data-theme="dark"] .setting-icon,
 body[data-theme="dark"] .experience-score span,
 body[data-theme="dark"] .date-arrow,
-body[data-theme="dark"] .bottom-nav .nav-item{color:var(--text-soft)}
+body[data-theme="dark"] .bottom-nav .nav-item,
+body[data-theme="dark"] .settings-row b,
+body[data-theme="dark"] .settings-group h3,
+body[data-theme="dark"] .row-arrow,
+body[data-theme="dark"] .about-card p,
+body[data-theme="dark"] .about-card li,
+body[data-theme="dark"] .about-hero>p,
+body[data-theme="dark"] .module-card p,
+body[data-theme="dark"] .module-card small,
+body[data-theme="dark"] .philosophy-card>p,
+body[data-theme="dark"] .philosophy-card>small,
+body[data-theme="dark"] .about-footer p,
+body[data-theme="dark"] .about-callout {color:var(--text-soft)}
 body[data-theme="dark"] .record-tabs button.active{color:#fff}
 body[data-theme="dark"] .bottom-nav{background:var(--bg-panel)}
 body[data-theme="dark"] .nav-item.active{color:var(--brand)}
@@ -77,6 +97,21 @@ body[data-theme="dark"] .score-section{border-color:var(--line)}
 body[data-theme="dark"] .note-card textarea,.note-card .note-display{color:var(--text)}
 body[data-theme="dark"] .primary-btn{box-shadow:none}
 body[data-theme="dark"] .toast{background:#0b1f33}
+body[data-theme="dark"] .settings-group{background:rgba(18,29,45,.95)}
+body[data-theme="dark"] .settings-row{border-top-color:var(--line)}
+body[data-theme="dark"] .setting-icon{background:#18314d;color:#a4d0ff}
+body[data-theme="dark"] .about-hero{background:linear-gradient(145deg,#101d2e,#172a3f)}
+body[data-theme="dark"] .about-callout{background:linear-gradient(135deg,#112235,#162a3d);color:#b9d8f6}
+body[data-theme="dark"] .module-card{background:rgba(19,31,46,.9)}
+body[data-theme="dark"] .philosophy-art{background:linear-gradient(145deg,#12253a,#16324a);color:#dff0ff}
+body[data-theme="dark"] .about-back{background:var(--bg-body)}
+body[data-theme="dark"] .about-section-heading h2,
+body[data-theme="dark"] .about-card h3,
+body[data-theme="dark"] .about-brand h1,
+body[data-theme="dark"] .module-card h3,
+body[data-theme="dark"] .idea-grid b,
+body[data-theme="dark"] .about-lead,
+body[data-theme="dark"] .philosophy-card>strong{color:var(--text)}
 .view{display:none;animation:fade .18s ease}.view.active{display:block}@keyframes fade{from{opacity:.5;transform:translateY(3px)}to{opacity:1;transform:none}}
 .date-switcher,.section-card,.experience-card,.period-tabs,.settings-head,.update-card,.principle-card{background:var(--bg-panel);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:17px}
 .date-switcher{display:grid;grid-template-columns:40px 1fr 40px 36px;align-items:center;padding:7px;margin-bottom:10px}.date-center{text-align:center}.date-center b{font-size:13px}.date-center span{display:block;font-size:9px;color:var(--text-muted);margin-top:2px}.date-arrow,.calendar-btn{border:0;background:var(--bg-panel-soft);border-radius:11px;height:36px;color:var(--text-soft);font-size:23px}.calendar-btn{font-size:15px}
