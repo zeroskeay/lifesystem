@@ -8,6 +8,7 @@ import {
   checkIcons,
   today,
   defaults,
+  defaultRecord,
   key,
   isToday,
   isFuture,
@@ -43,9 +44,11 @@ function applyTheme(themeName) {
   const themeBtn = document.getElementById("themeBtn");
   if (themeBtn) {
     const label = document.getElementById("themeModeLabel");
+    const icon = themeBtn.querySelector(".setting-icon");
     const isDark = theme === "dark";
-    themeBtn.querySelector("span").textContent = isDark ? "☀" : "☾";
-    label.textContent = isDark ? "深色模式" : "浅色模式";
+    if (icon) icon.textContent = isDark ? "☀" : "☾";
+    if (label) label.textContent = isDark ? "深色模式" : "浅色模式";
+    document.getElementById("themeToggle")?.classList.toggle("active", isDark);
   }
 }
 
@@ -83,7 +86,7 @@ function confirmAction(message, onConfirm) {
 }
 
 async function exportBackup() {
-  const filename = `life-system-backup-${key(today)}.json`;
+  const filename = `jianwei-backup-${key(today)}.json`;
   const content = exportData(appState.data);
 
   if (nativeCapacitor?.isNativePlatform() && nativeFilesystemPlugin) {
@@ -120,6 +123,7 @@ function persistRecord(record) {
 
 function navigate(view) {
   appState.currentView = view;
+  document.querySelector(".app-shell").classList.toggle("about-open", view === "about");
   document.querySelectorAll(".view").forEach((v) => v.classList.toggle("active", v.dataset.view === view));
   document.querySelectorAll(".nav-item").forEach((v) => v.classList.toggle("active", v.dataset.nav === view));
 
@@ -168,7 +172,7 @@ function renderSparkline(svgId, days, endDate) {
 
 function renderHome() {
   const recorded = hasRecord(appState.selectedDate);
-  const r = appState.data[key(appState.selectedDate)] || { checks: {}, scores: { ...defaults }, score: 7.5, note: "" };
+  const r = appState.data[key(appState.selectedDate)] || defaultRecord();
 
   document.getElementById("dateLabel").textContent = `${appState.selectedDate.getFullYear()}年${appState.selectedDate.getMonth() + 1}月${appState.selectedDate.getDate()}日`;
   document.getElementById("dateHint").textContent = `星期${dayNames[appState.selectedDate.getDay()]}${isToday(appState.selectedDate) ? " · 今天" : ""}`;
@@ -194,6 +198,15 @@ function renderHome() {
   renderSparkline("homeSparkline", 7, appState.selectedDate);
 }
 
+function durationScale(maxMinutes) {
+  const step = maxMinutes <= 300 ? 1 : 2;
+  const labels = [];
+  for (let hour = 0; hour <= maxMinutes / 60; hour += step) {
+    labels.push(`<span>${hour}</span>`);
+  }
+  return `<div class="score-scale" aria-hidden="true">${labels.join("")}</div>`;
+}
+
 function renderEditor() {
   if (isFuture(appState.selectedDate)) {
     navigate("home");
@@ -214,14 +227,14 @@ function renderEditor() {
   const details = r.details || {};
   const scoreScale = `<div class="score-scale" aria-hidden="true">${Array.from({ length: 10 }, (_, i) => `<span>${i + 1}</span>`).join("")}</div>`;
   const body = x === "sleep"
-    ? `<div class="editor-section"><label class="field-label">睡眠时长</label><div class="duration-control"><strong id="sleepMinutesValue">${formatMinutes(details.sleepMinutes ?? 360)}</strong><input class="duration-range" data-field="sleepMinutes" type="range" min="0" max="720" step="30" value="${details.sleepMinutes ?? 360}"></div></div>`
+    ? `<div class="score-section"><label class="field-label">睡眠时长 <strong id="sleepMinutesValue">${formatMinutes(details.sleepMinutes ?? 360)}</strong></label><input class="duration-range" data-field="sleepMinutes" type="range" min="0" max="720" step="30" value="${details.sleepMinutes ?? 360}">${durationScale(720)}</div>`
     : x === "body"
-      ? `<div class="editor-section"><label class="field-label">锻炼内容和时长</label><input id="contentInput" class="text-input" maxlength="100" placeholder="例如：跑步、散步、拉伸" value="${escapeHtml(details.bodyActivity || "")}"><label class="field-label">锻炼时长</label><div class="duration-control"><strong id="bodyMinutesValue">${formatMinutes(details.bodyMinutes ?? 30)}</strong><input class="duration-range" data-field="bodyMinutes" type="range" min="0" max="300" step="30" value="${details.bodyMinutes ?? 30}"></div></div>`
+      ? `<div class="editor-section"><label class="field-label">锻炼内容和时长</label><input id="contentInput" class="text-input" maxlength="100" placeholder="例如：跑步、散步、拉伸" value="${escapeHtml(details.bodyActivity || "")}"><div class="score-section"><label class="field-label">锻炼时长 <strong id="bodyMinutesValue">${formatMinutes(details.bodyMinutes ?? 30)}</strong></label><input class="duration-range" data-field="bodyMinutes" type="range" min="0" max="300" step="10" value="${details.bodyMinutes ?? 30}">${durationScale(300)}</div></div>`
       : x === "task"
         ? `<div class="editor-section"><label class="field-label">今日待办（最多3项）</label><div class="todo-list">${r.todos.map((todo, i) => `<div class="todo-swipe"><div class="todo-actions"><button class="todo-delete" data-index="${i}" aria-label="删除待办">删除</button></div><div class="todo-row" data-index="${i}"><label><input class="todo-check" type="checkbox" data-index="${i}" ${r.todoDone?.[i] ? "checked" : ""}><span>${escapeHtml(todo)}</span></label></div></div>`).join("")}</div>${r.todos.length < 3 ? '<div class="todo-add"><input id="todoInput" maxlength="50" placeholder="添加任务"><button id="todoAdd">＋ 添加任务</button></div>' : ""}</div>`
         : x === "life"
           ? `<div class="editor-section"><label class="field-label">内容</label><textarea id="contentInput" maxlength="300" placeholder="今天主动做了什么？">${escapeHtml(details.lifeContent || "")}</textarea><label class="field-label">目的</label><input id="purposeInput" class="text-input" maxlength="100" placeholder="为什么做这件事？" value="${escapeHtml(details.lifePurpose || "")}"></div>`
-          : `<div class="editor-section"><label class="field-label">时长</label><div class="duration-control"><strong id="entertainmentMinutesValue">${formatMinutes(details.entertainmentMinutes ?? 90)}</strong><input class="duration-range" data-field="entertainmentMinutes" type="range" min="0" max="600" step="30" value="${details.entertainmentMinutes ?? 90}"></div><label class="field-label">目的</label><input id="purposeInput" class="text-input" maxlength="100" placeholder="例如：放松心情" value="${escapeHtml(details.entertainmentPurpose || "")}"></div>`;
+          : `<div class="editor-section"><div class="score-section"><label class="field-label">时长 <strong id="entertainmentMinutesValue">${formatMinutes(details.entertainmentMinutes ?? 90)}</strong></label><input class="duration-range" data-field="entertainmentMinutes" type="range" min="0" max="600" step="30" value="${details.entertainmentMinutes ?? 90}">${durationScale(600)}</div><label class="field-label">目的</label><input id="purposeInput" class="text-input" maxlength="100" placeholder="例如：放松心情" value="${escapeHtml(details.entertainmentPurpose || "")}"></div>`;
 
   editor.innerHTML = `<div class="editor-heading"><span class="record-icon ${x}">${checkIcons[x]}</span><div><h2>${checkNames[x]}</h2><small>${checkDescriptions[x]}</small></div><strong id="editorScore">${score}/10</strong></div><div class="score-section"><label class="field-label">评分</label><input id="editorScoreInput" class="editor-score" type="range" min="1" max="10" step="1" value="${Math.max(1, score)}">${scoreScale}</div>${body}`;
 
@@ -308,17 +321,36 @@ function renderEditor() {
     }));
   }
 
-  let todoStartX = 0;
   editor.querySelectorAll(".todo-swipe").forEach((row) => {
+    let startX = 0;
+    let startY = 0;
+    let dragging = false;
     row.addEventListener("pointerdown", (event) => {
       if (event.target.closest("button,input")) return;
-      todoStartX = event.clientX;
+      startX = event.clientX;
+      startY = event.clientY;
+      dragging = true;
       row.setPointerCapture?.(event.pointerId);
     });
-    row.addEventListener("pointerup", (event) => {
-      const delta = event.clientX - todoStartX;
+    row.addEventListener("pointermove", (event) => {
+      if (!dragging) return;
+      const deltaX = event.clientX - startX;
+      const deltaY = event.clientY - startY;
+      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 8) {
+        event.preventDefault();
+      }
+    });
+    const finishTodoSwipe = (event) => {
+      if (!dragging) return;
+      dragging = false;
+      const delta = event.clientX - startX;
       if (delta < -35) row.classList.add("open");
       if (delta > 35) row.classList.remove("open");
+      row.releasePointerCapture?.(event.pointerId);
+    };
+    row.addEventListener("pointerup", finishTodoSwipe);
+    row.addEventListener("pointercancel", () => {
+      dragging = false;
     });
   });
 }
@@ -378,7 +410,7 @@ function drawRadar(rows) {
   const cy = 112;
   const R = 78;
   const labels = ["睡眠", "身体", "任务", "主动", "娱乐"];
-  const vals = labels.map((_, i) => avg(rows.filter((x) => x.record), (x) => Number(x.record?.scores?.[checkKeys[i]] ?? [7, 6, 8, 7, 6][i])));
+  const vals = labels.map((_, i) => avg(rows.filter((x) => x.record), (x) => Number(x.record?.scores?.[checkKeys[i]] ?? defaults[checkKeys[i]])));
   let html = "";
 
   for (let ring = 1; ring <= 4; ring += 1) {
@@ -452,7 +484,7 @@ function initializeApp() {
   });
 
   document.getElementById("githubBtn").addEventListener("click", () => window.open(`https://github.com/${GITHUB_REPO}/releases/latest`, "_blank"));
-  document.getElementById("aboutBtn").addEventListener("click", () => showToast(`生活系统 v${APP_VERSION}`));
+  document.getElementById("aboutBackBtn").addEventListener("click", () => navigate("settings"));
 
   document.querySelectorAll(".period").forEach((b) => b.addEventListener("click", () => {
     document.querySelectorAll(".period").forEach((x) => x.classList.remove("active"));
@@ -508,8 +540,6 @@ function initializeApp() {
     const nextTheme = document.body.dataset.theme === "dark" ? "light" : "dark";
     applyTheme(nextTheme);
   });
-
-  document.querySelectorAll(".back-btn").forEach((b) => b.addEventListener("click", () => navigate(b.dataset.nav)));
 
   applyTheme(localStorage.getItem(THEME_KEY) || "light");
   renderHome();

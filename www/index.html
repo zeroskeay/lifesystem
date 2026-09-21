@@ -5,17 +5,17 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#eef7ff">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>生活系统</title>
+  <title>见微 · Life System</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main class="app-shell">
   <header class="app-header">
     <div class="brand">
-      <img src="icon.png" class="app-icon" alt="生活系统">
+      <img src="icon.png" class="app-icon" alt="见微">
       <div class="brand-copy">
-        <div class="brand-title">生活系统</div>
-        <div class="brand-subtitle">记录当下 · 看见规律 · 掌控生活</div>
+        <div class="brand-title">见微</div>
+        <div class="brand-subtitle">Life System</div>
       </div>
     </div>
   </header>
@@ -40,11 +40,11 @@
         <span id="completion" class="pill">0/5</span>
       </div>
       <div class="status-grid">
-        <div class="status-item sleep" data-key="sleep"><span class="status-icon">☾</span><b>睡眠</b><small>7/10</small></div>
-        <div class="status-item body" data-key="body"><span class="status-icon">♟</span><b>身体</b><small>6/10</small></div>
-        <div class="status-item task" data-key="task"><span class="status-icon">✓</span><b>任务</b><small>8/10</small></div>
-        <div class="status-item life" data-key="life"><span class="status-icon">✦</span><b>主动</b><small>7/10</small></div>
-        <div class="status-item entertainment" data-key="entertainment"><span class="status-icon">⌁</span><b>娱乐</b><small>6/10</small></div>
+        <div class="status-item sleep" data-key="sleep"><span class="status-icon">☾</span><b>睡眠</b><small>—</small></div>
+        <div class="status-item body" data-key="body"><span class="status-icon">♟</span><b>身体</b><small>—</small></div>
+        <div class="status-item task" data-key="task"><span class="status-icon">✓</span><b>任务</b><small>—</small></div>
+        <div class="status-item life" data-key="life"><span class="status-icon">✦</span><b>主动</b><small>—</small></div>
+        <div class="status-item entertainment" data-key="entertainment"><span class="status-icon">⌁</span><b>娱乐</b><small>—</small></div>
       </div>
     </section>
 
@@ -53,7 +53,7 @@
         <span class="smile">●</span>
         <div>
           <span class="mini-label">今日体验</span>
-          <div class="experience-score"><strong id="scoreValue">7.5</strong><span>/ 10</span></div>
+          <div class="experience-score"><strong id="scoreValue">—</strong><span>/ 10</span></div>
         </div>
       </div>
       <div class="sparkline-wrap">
@@ -78,7 +78,7 @@
   </section>
 
   <section class="view" data-view="features">
-    <div class="page-title"><button class="back-btn" data-nav="home">‹</button><div><span class="mini-label">LIFE SYSTEM</span><h2>功能特点</h2></div></div>
+    <div class="page-title"><div><span class="mini-label">LIFE SYSTEM</span><h2>功能特点</h2></div></div>
     <section class="section-card feature-list">
       <article><span class="feature-icon green">↗</span><div><b>每日记录</b><p>记录睡眠、身体、任务、主动、娱乐和真实的生活体验</p></div></article>
       <article><span class="feature-icon purple">⌁</span><div><b>数据统计</b><p>7天趋势、历史记录、图表分析，帮助你发现规律</p></div></article>
@@ -98,7 +98,7 @@
   </section>
 
   <section class="view" data-view="records">
-    <div class="page-title"><button class="back-btn" data-nav="home">‹</button><h2>记录</h2></div>
+    <div class="page-title"><div><span class="mini-label">RECORD</span><h2>记录</h2></div></div>
     <div class="date-switcher record-date-switcher">
       <button id="recordPrevDay" class="date-arrow">‹</button><div class="date-center"><b id="recordDateLabel"></b><span id="recordDateHint"></span></div><button id="recordNextDay" class="date-arrow">›</button><button id="recordTodayBtn" class="icon-btn" aria-label="回到今天">⚙</button>
     </div>
@@ -134,20 +134,88 @@
 
   <section class="view" data-view="settings">
     <div class="page-title"><div><span class="mini-label">LIFE SYSTEM</span><h2>设置</h2></div></div>
-    <div class="settings-head">
-      <img src="icon.png" alt="">
-      <div><b>生活系统</b></div>
-    </div>
-    <section class="section-card settings-list">
-      <button id="themeBtn"><span class="setting-icon">☾</span><div><b>主题模式</b><small id="themeModeLabel">浅色模式</small></div><span>›</span></button>
-      <button id="dataBtn"><span class="setting-icon">▣</span><div><b>数据管理</b><small>导出 / 备份</small></div><span>›</span></button>
-      <button id="restoreBtn"><span class="setting-icon">↥</span><div><b>恢复备份</b><small>导入 .json 文件</small></div><span>›</span></button>
-      <button id="clearDataBtn"><span class="setting-icon">⌫</span><div><b>清空记录</b><small>删除本地全部数据</small></div><span>›</span></button>
-      <button id="githubBtn"><span class="setting-icon">◉</span><div><b>项目主页</b><small>GitHub · 下载最新版本</small></div><span>›</span></button>
-      <button id="aboutBtn"><span class="setting-icon">ⓘ</span><div><b>关于应用</b><small>版本 __APP_VERSION__</small></div><span>›</span></button>
-      <input id="restoreInput" type="file" accept="application/json,.json" hidden>
+    <section class="settings-group">
+      <h3>显示</h3>
+      <button id="themeBtn" class="settings-row"><span class="setting-icon">◐</span><div><b id="themeModeLabel">深色模式</b></div><span id="themeToggle" class="theme-toggle"><i></i></span></button>
     </section>
-    <section class="quote-card">活着，有良好体验感的活着</section>
+    <section class="settings-group">
+      <h3>数据</h3>
+      <button id="restoreBtn" class="settings-row" type="button"><span class="setting-icon">↥</span><div><b>数据导入</b></div><span class="row-arrow">›</span></button>
+      <button id="dataBtn" class="settings-row" type="button"><span class="setting-icon">☁</span><div><b>数据备份</b></div><span class="row-arrow">›</span></button>
+      <button id="clearDataBtn" class="settings-row" type="button"><span class="setting-icon">⌫</span><div><b>清空数据</b></div><span class="row-arrow">›</span></button>
+    </section>
+    <section class="settings-group">
+      <h3>关于</h3>
+      <button id="githubBtn" class="settings-row" type="button"><span class="setting-icon">◉</span><div><b>项目主页</b></div><span class="row-arrow">›</span></button>
+      <button id="aboutBtn" data-nav="about" class="settings-row"><span class="setting-icon">ⓘ</span><div><b>关于软件</b></div><span class="row-arrow">›</span></button>
+    </section>
+    <input id="restoreInput" type="file" accept="application/json,.json" hidden>
+  </section>
+
+  <section class="view about-view" data-view="about">
+    <button class="about-back" id="aboutBackBtn" type="button">‹ <span>关于软件</span></button>
+    <section class="about-hero section-card">
+      <div class="about-brand">
+        <img src="icon.png" alt="见微">
+        <div><h1>见微</h1><p>Life System</p></div>
+      </div>
+      <p class="about-slogan">记录当下 · 看见规律 · 掌控生活</p>
+      <p>用简单的方式，记录真实的生活，<br>让每一天都有迹可循。</p>
+    </section>
+
+    <section class="about-card section-card">
+      <div class="about-section-heading"><span>01</span><h2>这是一个什么软件？</h2></div>
+      <h3>见微</h3>
+      <p>见微不是日程管理器，也不是打卡软件。它希望帮助你每天花很少的时间，记录自己的真实状态。</p>
+      <ul>
+        <li>今天睡得怎么样？</li>
+        <li>身体状态怎么样？</li>
+        <li>重要的事情完成了吗？</li>
+        <li>有没有主动做自己想做的事情？</li>
+        <li>今天的娱乐和放松怎么样？</li>
+        <li>今天整体感觉如何？</li>
+      </ul>
+      <div class="about-callout">长期记录之后，再通过数据回头看：<br>我的生活到底是什么状态？<br>什么事情让我感觉更好？<br>我的生活正在向哪里变化？</div>
+    </section>
+
+    <section class="about-card section-card">
+      <div class="about-section-heading"><span>02</span><h2>五个生活模块</h2></div>
+      <p>见微将你的生活分为 5 个维度，帮助你全面了解自己。</p>
+      <div class="module-list">
+        <article class="module-card module-sleep"><span class="module-icon">☾</span><div><h3>睡眠</h3><p>睡得好，才有好状态</p></div><small>主观评分<br>睡眠时长</small></article>
+        <article class="module-card module-body"><span class="module-icon">♟</span><div><h3>身体</h3><p>运动，让身体更有活力</p></div><small>主观评分<br>锻炼内容<br>锻炼时长</small></article>
+        <article class="module-card module-task"><span class="module-icon">✓</span><div><h3>任务</h3><p>把重要的事一件件完成</p></div><small>主观评分<br>最多 3 项 TODO<br>完成情况</small></article>
+        <article class="module-card module-life"><span class="module-icon">✦</span><div><h3>主动</h3><p>主动选择，认真生活</p></div><small>主观评分<br>主动做了什么<br>为什么做</small></article>
+        <article class="module-card module-entertainment"><span class="module-icon">⌁</span><div><h3>娱乐</h3><p>适度放松，享受当下</p></div><small>主观评分<br>娱乐时长<br>娱乐目的</small></article>
+      </div>
+    </section>
+
+    <section class="about-card section-card">
+      <div class="about-section-heading"><span>03</span><h2>为什么要记录？</h2></div>
+      <h3>记录不是为了管理自己，<br>而是为了认识自己。</h3>
+      <div class="about-flow"><span>记录</span><b>→</b><span>看见</span><b>→</b><span>理解</span><b>→</b><span>调整</span></div>
+      <div class="about-callout">⟳ 形成一个良性循环：<br>记录　→　观察　→　理解　→　调整　→　再记录</div>
+    </section>
+
+    <section class="about-card section-card">
+      <div class="about-section-heading"><span>04</span><h2>设计思想</h2></div>
+      <p class="about-lead">我们希望你拥有的生活状态：</p>
+      <div class="idea-grid">
+        <div><b>◐　稳</b><p>先把生活稳住。睡眠、身体、基本生活状态，是一切选择的基础。</p></div>
+        <div><b>☀　活</b><p>生活不只是完成任务。人还需要体验、休息、娱乐与投入。</p></div>
+        <div><b>▥　进</b><p>通过持续记录产生变化，完成重要事情，学习新的东西。</p></div>
+        <div><b>✦　选</b><p>越是想为了拥有更多选择，了解自己，知道什么适合自己。</p></div>
+      </div>
+    </section>
+
+    <section class="about-card philosophy-card section-card">
+      <div class="about-section-heading"><span>05</span><h2>软件哲学</h2></div>
+      <div class="philosophy-art">生活系统<br><em>活着，<br>有良好体验感的活着。</em></div>
+      <p>我们无法控制生活中发生的一切，<br>但可以逐渐了解自己的状态，<br>看见生活中的规律，<br>并在理解的基础上做出自己的选择。</p>
+      <strong>稳　·　活　·　进　·　选</strong>
+      <small>活着，有良好体验感的活着。</small>
+    </section>
+
   </section>
 
   <nav class="bottom-nav">
