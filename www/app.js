@@ -36,6 +36,33 @@ const appState = {
 
 const THEME_KEY = "life-system-theme";
 const hasRecord = (d) => Object.prototype.hasOwnProperty.call(appState.data, key(d));
+const hasScore = (score) => Number.isFinite(score);
+
+function categoryAverage(records, category) {
+  const values = records
+    .filter((row) => row.record?.checks?.[category])
+    .map((row) => Number(row.record.scores?.[category]))
+    .filter(hasScore);
+  return values.length ? avg(values, (value) => value) : null;
+}
+
+function scoreSegments(rows, pointFor) {
+  const segments = [];
+  let segment = [];
+
+  rows.forEach((row, index) => {
+    const score = row.record ? recordScore(row.record) : null;
+    if (hasScore(score)) {
+      segment.push(pointFor(score, index));
+    } else if (segment.length) {
+      segments.push(segment);
+      segment = [];
+    }
+  });
+
+  if (segment.length) segments.push(segment);
+  return segments;
+}
 
 function applyTheme(themeName) {
   const theme = themeName || localStorage.getItem(THEME_KEY) || "light";
@@ -140,10 +167,11 @@ function renderBars(id, days, endDate) {
   box.innerHTML = "";
 
   weekRecords(days, endDate, appState.data).forEach(({ date, record }) => {
-    const score = record ? recordScore(record) : 0;
+    const score = record ? recordScore(record) : null;
     const col = document.createElement("div");
     col.className = "bar-col";
-    col.innerHTML = `<div class="bar-stack"><i class="bar-fill" style="height:${clamp(score * 10, 3, 100)}%"></i></div><span>${date.getMonth() + 1}/${date.getDate()}</span>`;
+    const height = hasScore(score) ? clamp(score * 10, 3, 100) : 0;
+    col.innerHTML = `<div class="bar-stack"><i class="bar-fill${hasScore(score) ? "" : " missing"}" style="height:${height}%"></i></div><span>${date.getMonth() + 1}/${date.getDate()}</span>`;
     box.appendChild(col);
   });
 }
@@ -152,22 +180,19 @@ function renderSparkline(svgId, days, endDate) {
   const svg = document.getElementById(svgId);
   if (!svg) return;
 
-  const vals = weekRecords(days, endDate, appState.data)
-    .map((x) => (x.record ? recordScore(x.record) : null))
-    .filter((x) => x !== null);
+  const rows = weekRecords(days, endDate, appState.data);
+  const segments = scoreSegments(rows, (score, index) => {
+    const x = 5 + (index / Math.max(1, rows.length - 1)) * 140;
+    const y = 49 - score * 4.2;
+    return `${x},${y}`;
+  });
 
-  if (!vals.length) {
+  if (!segments.length) {
     svg.innerHTML = "";
     return;
   }
 
-  const pts = vals.map((v, i) => {
-    const x = 5 + (i / Math.max(1, vals.length - 1)) * 140;
-    const y = 49 - v * 4.2;
-    return `${x},${y}`;
-  }).join(" ");
-
-  svg.innerHTML = `<polyline points="${pts}" fill="none" stroke="#2389ee" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`;
+  svg.innerHTML = segments.map((points) => `<polyline points="${points.join(" ")}" fill="none" stroke="#2389ee" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`).join("");
 }
 
 function renderHome() {
@@ -183,12 +208,12 @@ function renderHome() {
   document.querySelectorAll(".status-item").forEach((el) => {
     const x = el.dataset.key;
     el.classList.toggle("done", !!r.checks[x]);
-    const score = recorded ? r.scores?.[x] ?? defaults[x] : null;
+    const score = recorded && r.checks?.[x] ? r.scores?.[x] ?? defaults[x] : null;
     el.querySelector("small").textContent = score === null ? "—" : `${score}/10`;
   });
 
-  const averageScore = checkKeys.reduce((sum, x) => sum + Number(r.scores?.[x] ?? defaults[x]), 0) / checkKeys.length;
-  document.getElementById("scoreValue").textContent = recorded ? averageScore.toFixed(1) : "—";
+  const averageScore = recordScore(r);
+  document.getElementById("scoreValue").textContent = hasScore(averageScore) ? averageScore.toFixed(1) : "—";
   document.getElementById("noteDisplay").textContent = recorded ? (r.note || "") : "";
   document.getElementById("editTodayBtn").textContent = recorded ? "去修改" : "去记录";
   document.getElementById("editTodayBtn").hidden = isFuture(appState.selectedDate);
@@ -358,16 +383,17 @@ function renderEditor() {
 function renderStats() {
   const rows = weekRecords(appState.currentDays, appState.selectedDate, appState.data);
   const scores = rows.map((x) => (x.record ? recordScore(x.record) : null));
-  const valid = scores.filter((x) => x !== null);
+  const valid = scores.filter(hasScore);
 
   document.getElementById("statsAvg").textContent = `平均 ${valid.length ? avg(valid, (x) => x).toFixed(1) : "—"}`;
   drawTrend(rows);
   drawRadar(rows);
 
-  const recent = weekRecords(7, appState.selectedDate, appState.data).filter((x) => x.record);
-  document.getElementById("weekSleep").textContent = recent.length ? avg(recent, (x) => Number(x.record.scores?.sleep ?? 7)).toFixed(1) : "—";
-  document.getElementById("weekBody").textContent = recent.length ? avg(recent, (x) => Number(x.record.scores?.body ?? 6)).toFixed(1) : "—";
-  document.getElementById("weekTask").textContent = recent.length ? avg(recent, (x) => Number(x.record.scores?.task ?? 8)).toFixed(1) : "—";
+  const recent = weekRecords(7, appState.selectedDate, appState.data);
+  ["sleep", "body", "task"].forEach((category) => {
+    const value = categoryAverage(recent, category);
+    document.getElementById(`week${category[0].toUpperCase()}${category.slice(1)}`).textContent = hasScore(value) ? value.toFixed(1) : "—";
+  });
 }
 
 function drawTrend(rows) {
@@ -382,15 +408,15 @@ function drawTrend(rows) {
     html += `<line x1="${pad}" y1="${y}" x2="${w - pad}" y2="${y}" stroke="#e8f0f6" stroke-width="1"/>`;
   }
 
-  const vals = rows.map((x) => (x.record ? recordScore(x.record) : null));
-  const valid = vals.filter((x) => x !== null);
+  const segments = scoreSegments(rows, (score, index) => `${pad + (index / Math.max(1, rows.length - 1)) * (w - 2 * pad)},${h - 20 - score * 11}`);
 
-  if (valid.length) {
-    const pts = vals.map((v, i) => (v === null ? null : `${pad + (i / Math.max(1, rows.length - 1)) * (w - 2 * pad)},${h - 20 - v * 11}`)).filter(Boolean);
-    html += `<polyline points="${pts.join(" ")}" fill="none" stroke="#2186eb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
-    pts.forEach((p) => {
+  if (segments.length) {
+    segments.forEach((pts) => {
+      html += `<polyline points="${pts.join(" ")}" fill="none" stroke="#2186eb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+      pts.forEach((p) => {
       const [x, y] = p.split(",");
       html += `<circle cx="${x}" cy="${y}" r="3.2" fill="#2186eb"/>`;
+      });
     });
   }
 
@@ -410,7 +436,7 @@ function drawRadar(rows) {
   const cy = 112;
   const R = 78;
   const labels = ["睡眠", "身体", "任务", "主动", "娱乐"];
-  const vals = labels.map((_, i) => avg(rows.filter((x) => x.record), (x) => Number(x.record?.scores?.[checkKeys[i]] ?? defaults[checkKeys[i]])));
+  const vals = checkKeys.map((category) => categoryAverage(rows, category));
   let html = "";
 
   for (let ring = 1; ring <= 4; ring += 1) {
@@ -429,12 +455,13 @@ function drawRadar(rows) {
 
   outer.forEach((p, i) => {
     const [x, y] = p.split(",");
-    html += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#e3edf5" stroke-width="1"/><text x="${cx + (x - cx) * 1.2}" y="${cy + (y - cy) * 1.2}" text-anchor="middle" font-size="9" fill="#4b6684">${labels[i]} ${vals[i].toFixed(1)}</text>`;
+    const label = hasScore(vals[i]) ? vals[i].toFixed(1) : "—";
+    html += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#e3edf5" stroke-width="1"/><text x="${cx + (x - cx) * 1.2}" y="${cy + (y - cy) * 1.2}" text-anchor="middle" font-size="9" fill="#4b6684">${labels[i]} ${label}</text>`;
   });
 
   const area = labels.map((_, i) => {
     const a = -Math.PI / 2 + i * 2 * Math.PI / 5;
-    const rr = R * clamp(vals[i], 0, 10) / 10;
+    const rr = R * clamp(vals[i] ?? 0, 0, 10) / 10;
     return `${cx + Math.cos(a) * rr},${cy + Math.sin(a) * rr}`;
   }).join(" ");
 
@@ -511,12 +538,15 @@ function initializeApp() {
     try {
       const text = await file.text();
       const imported = parseImportedData(text);
-      appState.data = imported;
-      saveData(appState.data);
-      renderHome();
-      renderEditor();
-      renderStats();
-      showToast("数据已恢复");
+      const importedCount = Object.keys(imported).length;
+      const existingCount = Object.keys(appState.data).length;
+      confirmAction(`将用 ${importedCount} 条备份记录替换当前 ${existingCount} 条本地记录。此操作无法撤销，是否继续？`, () => {
+        appState.data = saveData(imported);
+        renderHome();
+        renderEditor();
+        renderStats();
+        showToast("数据已恢复");
+      });
     } catch (error) {
       console.error(error);
       showToast("恢复失败：文件格式不正确");
