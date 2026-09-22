@@ -33,7 +33,7 @@ jobs:
           packages: 'platform-tools platforms;android-36 build-tools;36.0.0'
 
       - name: Install npm dependencies
-        run: npm install --no-package-lock
+        run: npm ci
 
       - name: Prepare app build metadata
         shell: bash
